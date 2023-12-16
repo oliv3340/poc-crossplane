@@ -1,0 +1,67 @@
+apiVersion: container.gcp.upbound.io/v1beta1
+kind: NodePool
+metadata:
+  annotations:
+    meta.upbound.io/example-id: container/v1beta1/nodepool
+  labels:
+    testing.upbound.io/example-name: nodepool
+  name: nodepool
+spec:
+  deletionPolicy: Delete
+  providerConfigRef:
+    name: default
+  forProvider:
+    clusterSelector:
+      matchLabels:
+        testing.upbound.io/example-name: nodepool
+    nodeConfig:
+    - machineType: e2-medium
+      oauthScopes:
+      - https://www.googleapis.com/auth/cloud-platform
+      preemptible: true
+      serviceAccountSelector:
+        matchLabels:
+          testing.upbound.io/example-name: nodepool
+    nodeCount: 2
+
+---
+
+apiVersion: container.gcp.upbound.io/v1beta1
+kind: Cluster
+metadata:
+  annotations:
+    meta.upbound.io/example-id: container/v1beta1/cluster
+  labels:
+    testing.upbound.io/example-name: nodepool
+  name: nodepool
+spec:
+  deletionPolicy: Delete
+  providerConfigRef:
+    name: default
+  forProvider:
+    initialNodeCount: 1
+    location: europe-west1
+    removeDefaultNodePool: true
+    networkSelector:
+      matchLabels:
+        testing.upbound.io/example-name: cluster
+    subnetworkSelector:
+      matchLabels:
+        testing.upbound.io/example-name: cluster
+
+---
+
+apiVersion: cloudplatform.gcp.upbound.io/v1beta1
+kind: ServiceAccount
+metadata:
+  annotations:
+    meta.upbound.io/example-id: container/v1beta1/nodepool
+  labels:
+    testing.upbound.io/example-name: nodepool
+  name: nodepool
+spec:
+  deletionPolicy: Delete
+  providerConfigRef:
+    name: default
+  forProvider:
+    displayName: Service Account for GKE Cluster
